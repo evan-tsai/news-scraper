@@ -7,6 +7,13 @@ export default async () => {
     const browser = await puppeteer.launch(puppeteerConfigs.settings);
     const page = await browser.newPage();
     await page.setViewport(puppeteerConfigs.resolution);
+    // await page.setRequestInterception(true);
+    // page.on('request', request => {
+    //     if (request.resourceType() === 'image')
+    //         request.abort();
+    //     else
+    //         request.continue();
+    // });
     await runScrapers(page);
     await browser.close();
 }

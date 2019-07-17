@@ -13,4 +13,8 @@ export const puppeteerConfigs = {
         width: 1024,
         height: 800
     },
+    destination: {
+        waitUntil: 'networkidle0',
+        timeout: 0,
+    },
 };
