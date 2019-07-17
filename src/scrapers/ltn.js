@@ -59,7 +59,7 @@ export default async (page, type) => {
 
             await article.save();
         } catch (err) {
-            logger.warn(err);
+            logger.warn(err.toString());
             continue;
         }
     }

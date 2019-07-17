@@ -1,6 +1,8 @@
+const isDev = process.env.NODE_ENV === 'development';
+
 export const puppeteerConfigs = {
     settings: {
-        headless: false,
+        headless: !isDev,
         args: [
             '--ignore-certificate-errors',
             '--disable-infobars',

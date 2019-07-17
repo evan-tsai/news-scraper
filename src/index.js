@@ -3,8 +3,8 @@ import express from 'express';
 import { connectDb } from './models';
 import scrape from './services/scrape';
 import logger from './helpers/logger';
+import routes from './routes';
 const app = express();
-const routes = require('./routes/index');
 
 app.use('/', routes);
 
