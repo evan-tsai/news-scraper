@@ -2,7 +2,10 @@ export default [
     {
         scraper: 'ltn',
         categories: [
-            'sports'
+            'world',
+            'sports',
+            'entertainment',
+            'novelty',
         ]
     }
 ]

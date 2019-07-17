@@ -15,6 +15,6 @@ export const puppeteerConfigs = {
     },
     destination: {
         waitUntil: 'networkidle0',
-        timeout: 0,
+        timeout: 20000,
     },
 };
