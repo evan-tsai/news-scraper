@@ -17,8 +17,12 @@ const get = async (req, res) => {
 };
 
 const find = async (req, res) => {
-    const article = await models.Article.findById(req.params.id);
-    res.json(article);
+    try {
+        const article = await models.Article.findById(req.params.id);
+        res.json(article);
+    } catch (err) {
+        res.status(404).send('Article not found');
+    }
 }
 
 export default { get, find }
