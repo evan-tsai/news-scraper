@@ -1,9 +1,10 @@
-const Parser = require('rss-parser');
-const parser = new Parser();
 import models from '../models';
 import { getSelectorFromArray } from '../helpers/common';
 import { puppeteerConfigs } from '../configs/puppeteer';
+import logger from '../helpers/logger';
 
+const Parser = require('rss-parser');
+const parser = new Parser();
 const source = 'ltn';
 
 export default async (page, type) => {
@@ -58,7 +59,7 @@ export default async (page, type) => {
 
             await article.save();
         } catch (err) {
-            console.log(err);
+            logger.warn(err);
             continue;
         }
     }
