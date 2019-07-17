@@ -9,11 +9,11 @@ const app = express();
 app.use('/', routes);
 
 connectDb().then(async () => {
-  app.listen(process.env.PORT, (err) => {
-    if (err) {
-      return logger.error('Server failed to start');
-    }
-    scrape();
-    logger.info(`Server started on port ${process.env.PORT}!`);
-  });
+    app.listen(process.env.PORT, (err) => {
+        if (err) {
+            return logger.error('Server failed to start');
+        }
+        scrape();
+        logger.info(`Server started on port ${process.env.PORT}!`);
+    });
 });

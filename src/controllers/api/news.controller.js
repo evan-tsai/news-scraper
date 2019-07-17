@@ -16,6 +16,9 @@ const get = async (req, res) => {
 	res.json(articles);
 };
 
-export default {
-    get
+const find = async (req, res) => {
+    const article = await models.Article.findById(req.params.id);
+    res.json(article);
 }
+
+export default { get, find }
