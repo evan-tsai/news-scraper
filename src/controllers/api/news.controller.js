@@ -12,10 +12,10 @@ const get = async (req, res) => {
         articles = await models.Article.paginate(query, {
             sort: { date: -1 },
             page,
-            limit: limit || 10,
+            limit: parseInt(limit) || 10,
         });
     } else {
-        articles = await models.Article.find(query);
+        articles = await models.Article.find(query).sort({ date: -1 }).limit(parseInt(limit) || 0);
     }
 	res.json(articles);
 };

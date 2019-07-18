@@ -18,9 +18,9 @@ connectDb().then(async () => {
         if (err) {
             return logger.error('Server failed to start');
         }
+        logger.info(`Server started on port ${process.env.PORT}!`);
         cron.schedule('0 */2 * * *', () => {
             scrape();
-        })
-        logger.info(`Server started on port ${process.env.PORT}!`);
+        });
     });
 });
