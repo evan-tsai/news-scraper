@@ -2,8 +2,12 @@ import models from '../../models';
 
 const get = async (req, res) => {
     const { source, type, page, limit } = req.query;
-    const query = {};
     let articles;
+    let query = {};
+
+    if (source) query.source = { $in: source.split(',') };
+    if (type) query.type = { $in: type.split(',') };
+    
     if (page) {
         articles = await models.Article.paginate(query, {
             sort: { date: -1 },
@@ -11,7 +15,7 @@ const get = async (req, res) => {
             limit: limit || 10,
         });
     } else {
-        articles = await models.Article.find();
+        articles = await models.Article.find(query);
     }
 	res.json(articles);
 };
