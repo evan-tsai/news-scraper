@@ -1,5 +1,5 @@
 import models from '../models';
-import { getSelectorFromArray } from '../helpers/common';
+import { getSelectorFromArray, replaceTag } from '../helpers/common';
 import { puppeteerConfigs } from '../configs/puppeteer';
 import logger from '../helpers/logger';
 
@@ -33,18 +33,19 @@ export default async (page, type) => {
             const getInnerText = item => item.innerText;
             const title = await getSelectorFromArray(page, titleSelectors, getInnerText);
 
+            const removeTags = ['script', 'a', '.author', 'H1'];
+            for (let i = 0; i < removeTags.length; i++) {
+                await page.$$eval(removeTags[i], tags => tags.forEach(tag => tag.remove()));
+            }
+
             const content = await page.$eval('div[itemprop=articleBody]', div => {
                 let removeChild = false;
                 div.childNodes.forEach(node => {
                     if (node.innerText !== undefined && (node.innerText.includes('相關新聞') || node.innerText.includes('想看更多新聞嗎'))) {
                         removeChild = true;
                     }
-                    if (node.tagName === 'SCRIPT' ||
-                        removeChild ||
-                        node.className === 'author' ||
-                        node.tagName === 'H1') {
-                        div.removeChild(node);
-                    }
+
+                    if (removeChild) div.removeChild(node);
                 });
                 return div.innerHTML;
             });
