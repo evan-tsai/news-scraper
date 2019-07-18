@@ -1,5 +1,5 @@
 import models from '../models';
-import { getSelectorFromArray, replaceTag } from '../helpers/common';
+import { getSelectorFromArray, removeTags } from '../helpers/common';
 import { puppeteerConfigs } from '../configs/puppeteer';
 import logger from '../helpers/logger';
 
@@ -10,18 +10,18 @@ const source = 'ltn';
 export default async (page, type) => {
     const latest = await models.Article.findOne({ source, type }).sort({ date: -1 }).select('date');
     const feed = await parser.parseURL(`https://news.ltn.com.tw/rss/${type}.xml`);
-    let items = feed.items.map(item => {
+    let sites = feed.items.map(item => {
         return {
             link: item.link,
             pubDate: new Date(item.pubDate),
         }
     });
-    if (latest) items = items.filter(item => item.pubDate > latest.date);
+    if (latest) sites = sites.filter(item => item.pubDate > latest.date);
 
-    for (let i = 0; i < items.length; i++) {
+    for (let site of sites) {
         try {
-            const url = items[i].link;
-            const pubDate = items[i].pubDate;
+            const url = site.link;
+            const pubDate = site.pubDate;
             await page.goto(url, puppeteerConfigs.destination);
 
             const titleSelectors = [
@@ -33,15 +33,12 @@ export default async (page, type) => {
             const getInnerText = item => item.innerText;
             const title = await getSelectorFromArray(page, titleSelectors, getInnerText);
 
-            const removeTags = ['script', 'a', '.author', 'H1'];
-            for (let i = 0; i < removeTags.length; i++) {
-                await page.$$eval(removeTags[i], tags => tags.forEach(tag => tag.remove()));
-            }
+            await removeTags(page, ['script', 'a', 'iframe', '.author', 'H1']);
 
             const content = await page.$eval('div[itemprop=articleBody]', div => {
                 let removeChild = false;
                 div.childNodes.forEach(node => {
-                    if (node.innerText !== undefined && (node.innerText.includes('相關新聞') || node.innerText.includes('想看更多新聞嗎'))) {
+                    if (node.innerText !== undefined && (node.innerText.includes('相關新聞') || node.innerText.includes('想看更多新聞嗎') || node.dataset.desc === '相關新聞')) {
                         removeChild = true;
                     }
 

@@ -7,3 +7,9 @@ export const getSelectorFromArray = async (page, array, callback) => {
         }
     }
 }
+
+export const removeTags = async (page, array) => {
+    for (let tag of array) {
+        await page.$$eval(tag, elements => elements.forEach(node => node.remove()));
+    }
+}
