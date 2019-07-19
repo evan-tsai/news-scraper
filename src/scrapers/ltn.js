@@ -33,18 +33,18 @@ export default async (page, type) => {
             const getInnerText = item => item.innerText;
             const title = await getSelectorFromArray(page, titleSelectors, getInnerText);
 
-            await removeTags(page, ['script', 'a', 'iframe', '.author', 'H1']);
+            await removeTags(page, ['script', 'a', 'iframe', '.author', 'h1', '.boxTitle.ad']);
 
             const content = await page.$eval('div[itemprop=articleBody]', div => {
-                let removeChild = false;
-                div.childNodes.forEach(node => {
-                    if (node.innerText !== undefined && (node.innerText.includes('相關新聞') || node.innerText.includes('想看更多新聞嗎') || node.dataset.desc === '相關新聞')) {
-                        removeChild = true;
+                let removeElement = false;
+                div.querySelectorAll('*').forEach(element => {
+                    if (element.innerText !== undefined && (element.innerText.includes('相關新聞') || element.innerText.includes('想看更多新聞嗎') || element.dataset.desc === '相關新聞')) {
+                        removeElement = true;
                     }
 
-                    if (removeChild) div.removeChild(node);
+                    if (removeElement) element.remove();
                 });
-                return div.innerHTML;
+                return div.innerHTML.trim();
             });
 
             let article = new models.Article({
