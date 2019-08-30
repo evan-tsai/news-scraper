@@ -1,3 +1,4 @@
 import ltn from './ltn';
+import yahoo from './yahoo';
 
-export default { ltn };
+export default { ltn, yahoo };

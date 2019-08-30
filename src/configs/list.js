@@ -7,5 +7,14 @@ export default [
             'entertainment',
             'novelty',
         ]
-    }
+    },
+    {
+        scraper: 'yahoo',
+        categories: [
+            'world',
+            'sports',
+            'entertainment',
+            'lifestyle',
+        ]
+    },
 ]
