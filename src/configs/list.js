@@ -17,4 +17,13 @@ export default [
             'lifestyle',
         ]
     },
+    {
+        scraper: 'udn',
+        categories: [
+            'world',
+            'sports',
+            'entertainment',
+            'lifestyle',
+        ]
+    },
 ]
