@@ -9,7 +9,8 @@ export const getSelectorFromArray = async (page, array, callback) => {
 }
 
 export const removeTags = async (page, array) => {
-    for (let tag of array) {
+    const restrictedTags = ['script', 'style', 'link', 'a', 'iframe', 'h1', ...array];
+    for (let tag of restrictedTags) {
         await page.$$eval(tag, elements => elements.forEach(node => node.remove()));
     }
 }

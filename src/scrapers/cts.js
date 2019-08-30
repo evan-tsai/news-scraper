@@ -1,5 +1,4 @@
 import models from '../models';
-import { getSelectorFromArray } from '../helpers/common';
 
 const Parser = require('rss-parser');
 const parser = new Parser();
@@ -7,14 +6,24 @@ const parser = new Parser();
 export default class {
     constructor(page) {
         this.page = page;
-        this.source = 'ltn';
-        this.restrictedTags = ['.author', '.boxTitle.ad'];
+        this.source = 'cts';
+        this.restrictedTags = ['#video_container', '.news-src', '#div-gpt-ad-scroll_320x480-0'];
     }
 
     async getSites(type) {
-        type = type === 'lifestyle' ? 'novelty' : type;
+        switch (type) {
+            case 'lifestyle':
+                type = 'life';
+                break;
+            case 'entertainment':
+                type = 'entertain';
+                break;
+            case 'world':
+                type = 'international';
+                break;
+        }
         const latest = await models.Article.findOne({ source: this.source, type }).sort({ date: -1 }).select('date');
-        const feed = await parser.parseURL(`https://news.ltn.com.tw/rss/${type}.xml`);
+        const feed = await parser.parseURL(`https://news.cts.com.tw/rss/${type}.xml`);
         let sites = feed.items.map(item => {
             return {
                 link: item.link,
@@ -27,18 +36,11 @@ export default class {
     }
 
     async getTitle() {
-        const titleSelectors = [
-            'div.articlebody > h1',
-            'div.news_content > h1',
-            'div.conbox > h1'
-        ];
-    
-        const getInnerText = item => item.innerText;
-        return await getSelectorFromArray(this.page, titleSelectors, getInnerText);
+        return await this.page.$eval('h1.artical-title', item => item.innerText); 
     }
 
     async getContent() {
-        return await this.page.$eval('div[itemprop=articleBody]', div => {
+        return await this.page.$eval('div.artical-content', div => {
             let removeElement = false;
             div.querySelectorAll('*').forEach(element => {
                 if (element.innerText !== undefined && (element.innerText.includes('相關新聞') || element.innerText.includes('想看更多新聞嗎') || element.dataset.desc === '相關新聞')) {

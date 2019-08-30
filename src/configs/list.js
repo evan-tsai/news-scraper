@@ -26,4 +26,13 @@ export default [
             'lifestyle',
         ]
     },
+    {
+        scraper: 'cts',
+        categories: [
+            'world',
+            'sports',
+            'entertainment',
+            'lifestyle',
+        ]
+    },
 ]

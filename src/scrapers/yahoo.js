@@ -7,7 +7,7 @@ export default class {
     constructor(page) {
         this.page = page;
         this.source = 'yahoo';
-        this.removeTags = ['script', 'style', 'a', 'iframe', 'h1'];
+        this.restrictedTags = [];
     }
 
     async getSites(type) {

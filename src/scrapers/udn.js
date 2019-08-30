@@ -7,7 +7,7 @@ export default class {
     constructor(page) {
         this.page = page;
         this.source = 'udn';
-        this.removeTags = ['script', 'a', 'iframe', 'h1', 'style', '#story_art_title', '#story_bar', '#story_bady_info'];
+        this.restrictedTags = ['#story_art_title', '#story_bar', '#story_bady_info'];
     }
 
     async getSites(type) {

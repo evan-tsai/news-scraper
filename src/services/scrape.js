@@ -42,13 +42,13 @@ const scrapeCategory = async (scraper, type) => {
     for (let site of sites) {
         try {
             const url = site.link;
-            const pubDate = site.pubDate;
+            const date = new Date(site.pubDate);
             await scraper.page.goto(url, puppeteerConfigs.destination);
             const title = await scraper.getTitle();
-            await removeTags(scraper.page, scraper.removeTags);
+            await removeTags(scraper.page, scraper.restrictedTags);
             const content = await scraper.getContent();
 
-            let article = new models.Article({ title, source: scraper.source, content, type, date: new Date(pubDate) });
+            let article = new models.Article({ title, source: scraper.source, content, type, date });
 
             await article.save();
         } catch (err) {
