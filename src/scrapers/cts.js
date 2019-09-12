@@ -8,9 +8,11 @@ export default class {
         this.page = page;
         this.source = 'cts';
         this.restrictedTags = ['#video_container', '.news-src', '#div-gpt-ad-scroll_320x480-0'];
+        this.contentQuery = 'div.artical-content';
     }
 
     async getSites(type) {
+        const latest = await models.Article.findOne({ source: this.source, type }).sort({ date: -1 }).select('date');
         switch (type) {
             case 'lifestyle':
                 type = 'life';
@@ -22,7 +24,6 @@ export default class {
                 type = 'international';
                 break;
         }
-        const latest = await models.Article.findOne({ source: this.source, type }).sort({ date: -1 }).select('date');
         const feed = await parser.parseURL(`https://news.cts.com.tw/rss/${type}.xml`);
         let sites = feed.items.map(item => {
             return {
@@ -40,13 +41,13 @@ export default class {
     }
 
     async getContent() {
-        return await this.page.$eval('div.artical-content', div => {
+        return await this.page.$eval(this.contentQuery, div => {
             let removeElement = false;
             div.querySelectorAll('*').forEach(element => {
                 if (element.innerText !== undefined && (element.innerText.includes('相關新聞') || element.innerText.includes('想看更多新聞嗎') || element.dataset.desc === '相關新聞')) {
                     removeElement = true;
                 }
-
+                
                 if (removeElement) element.remove();
             });
             return div.innerHTML.trim();

@@ -8,6 +8,7 @@ export default class {
         this.page = page;
         this.source = 'yahoo';
         this.restrictedTags = [];
+        this.contentQuery = 'div.canvas-body';
     }
 
     async getSites(type) {
@@ -29,7 +30,7 @@ export default class {
     }
 
     async getContent() {
-        return await this.page.$eval('div.canvas-body', div => {
+        return await this.page.$eval(this.contentQuery, div => {
             let removeElement = false;
             div.querySelectorAll('*').forEach(element => {
                 if (element.innerText !== undefined && ((element.innerText.includes('更多') && element.innerText.includes('新聞') && element.innerText.includes('報導')))) {

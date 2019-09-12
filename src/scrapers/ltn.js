@@ -9,11 +9,12 @@ export default class {
         this.page = page;
         this.source = 'ltn';
         this.restrictedTags = ['.author', '.boxTitle.ad'];
+        this.contentQuery = 'div[itemprop=articleBody]';
     }
 
     async getSites(type) {
-        type = type === 'lifestyle' ? 'novelty' : type;
         const latest = await models.Article.findOne({ source: this.source, type }).sort({ date: -1 }).select('date');
+        type = type === 'lifestyle' ? 'novelty' : type;
         const feed = await parser.parseURL(`https://news.ltn.com.tw/rss/${type}.xml`);
         let sites = feed.items.map(item => {
             return {
@@ -38,7 +39,7 @@ export default class {
     }
 
     async getContent() {
-        return await this.page.$eval('div[itemprop=articleBody]', div => {
+        return await this.page.$eval(this.contentQuery, div => {
             let removeElement = false;
             div.querySelectorAll('*').forEach(element => {
                 if (element.innerText !== undefined && (element.innerText.includes('相關新聞') || element.innerText.includes('想看更多新聞嗎') || element.dataset.desc === '相關新聞')) {

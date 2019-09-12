@@ -4,10 +4,9 @@ import list from '../configs/list';
 import models from '../models';
 import scrapers from '../scrapers';
 import logger from '../helpers/logger';
-import { removeTags } from '../helpers/common';
+import { removeTags, replaceImages } from '../helpers/common';
 
 export default async () => {
-    logger.info('Scrape started');
     const browser = await puppeteer.launch(puppeteerConfigs.settings);
     const page = await browser.newPage();
     await page.setViewport(puppeteerConfigs.resolution);
@@ -45,8 +44,9 @@ const scrapeCategory = async (scraper, type) => {
             const date = new Date(site.pubDate);
             await scraper.page.goto(url, puppeteerConfigs.destination);
             const title = await scraper.getTitle();
-            await removeTags(scraper.page, scraper.restrictedTags);
-            const content = await scraper.getContent();
+            await removeTags(scraper.page, scraper.contentQuery, scraper.restrictedTags);
+            let content = await scraper.getContent();
+            content = await replaceImages(scraper.page, content, scraper.contentQuery);
 
             let article = new models.Article({ title, source: scraper.source, content, type, date });
 

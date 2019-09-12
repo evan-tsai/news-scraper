@@ -8,6 +8,7 @@ export default class {
         this.page = page;
         this.source = 'udn';
         this.restrictedTags = ['#story_art_title', '#story_bar', '#story_bady_info'];
+        this.contentQuery = this.type === 'entertainment' ? 'div#story' : 'div#story_body_content';
     }
 
     async getSites(type) {
@@ -45,9 +46,7 @@ export default class {
     }
 
     async getContent() {
-        const bodySelector = this.type === 'entertainment' ? 'div#story' : 'div#story_body_content';
-        
-        return await this.page.$eval(bodySelector, div => {
+        return await this.page.$eval(this.contentQuery, div => {
             let removeElement = false;
             div.querySelectorAll('*').forEach(element => {
                 if (element.id === 'story_tags') {
