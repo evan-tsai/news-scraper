@@ -35,4 +35,13 @@ export default [
             'lifestyle',
         ]
     },
+    {
+        scraper: 'sina',
+        categories: [
+            'world',
+            'sports',
+            'entertainment',
+            'lifestyle',
+        ]
+    },
 ]
