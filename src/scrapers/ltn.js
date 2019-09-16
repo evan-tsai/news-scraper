@@ -1,8 +1,4 @@
-import models from '../models';
 import { getSelectorFromArray } from '../helpers/common';
-
-const Parser = require('rss-parser');
-const parser = new Parser();
 
 export default class {
     constructor(page) {
@@ -12,19 +8,9 @@ export default class {
         this.contentQuery = 'div[itemprop=articleBody]';
     }
 
-    async getSites(type) {
-        const latest = await models.Article.findOne({ source: this.source, type }).sort({ date: -1 }).select('date');
+    getUrl(type) {
         type = type === 'lifestyle' ? 'novelty' : type;
-        const feed = await parser.parseURL(`https://news.ltn.com.tw/rss/${type}.xml`);
-        let sites = feed.items.map(item => {
-            return {
-                link: item.link,
-                pubDate: new Date(item.pubDate),
-            }
-        });
-        if (latest) sites = sites.filter(item => item.pubDate > latest.date);
-    
-        return sites;
+        return `https://news.ltn.com.tw/rss/${type}.xml`;
     }
 
     async getTitle() {

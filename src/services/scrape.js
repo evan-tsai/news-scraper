@@ -3,6 +3,7 @@ import { puppeteerConfigs } from '../configs/puppeteer';
 import list from '../configs/list';
 import models from '../models';
 import scrapers from '../scrapers';
+import parser from '../services/parser';
 import logger from '../helpers/logger';
 import { removeTags, replaceImages } from '../helpers/common';
 
@@ -37,7 +38,8 @@ const runScrapers = async (page) => {
 }
 
 const scrapeCategory = async (scraper, type) => {
-    const sites = await scraper.getSites(type);
+    const rssUrl = scraper.getUrl(type);
+    const sites = await new parser({ source: scraper.source, type, rssUrl }).getSites();
     for (let site of sites) {
         try {
             const url = site.link;

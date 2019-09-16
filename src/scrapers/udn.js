@@ -1,8 +1,3 @@
-import models from '../models';
-
-const Parser = require('rss-parser');
-const parser = new Parser();
-
 export default class {
     constructor(page) {
         this.page = page;
@@ -11,34 +6,17 @@ export default class {
         this.contentQuery = this.type === 'entertainment' ? 'div#story' : 'div#story_body_content';
     }
 
-    async getSites(type) {
-        this.type = type;
-        const latest = await models.Article.findOne({ source: this.source, type }).sort({ date: -1 }).select('date');
-        let url;
+    getUrl(type) {
         switch (type) {
             case 'world':
-                url = 'https://udn.com/rssfeed/news/2/7225?ch=news';
-                break;
+                return 'https://udn.com/rssfeed/news/2/7225?ch=news';
             case 'sports':
-                url = 'https://udn.com/rssfeed/news/2/7227?ch=news';
-                break;
+                return 'https://udn.com/rssfeed/news/2/7227?ch=news';
             case 'entertainment':
-                url = 'https://stars.udn.com/rss/news/1022/10088';
-                break;
+                return 'https://stars.udn.com/rss/news/1022/10088';
             case 'lifestyle':
-                url = 'https://udn.com/rssfeed/news/2/6649?ch=news';
-                break;
+                return 'https://udn.com/rssfeed/news/2/6649?ch=news';
         }
-        const feed = await parser.parseURL(url);
-        let sites = feed.items.map(item => {
-            return {
-                link: item.link,
-                pubDate: new Date(item.pubDate),
-            }
-        });
-        if (latest) sites = sites.filter(item => item.pubDate > latest.date);
-    
-        return sites;
     }
 
     async getTitle() {
