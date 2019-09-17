@@ -3,13 +3,12 @@ const Parser = require('rss-parser');
 const parser = new Parser();
 
 export default class {
-    constructor(config) {
-        this.source = config.source;
-        this.type = config.type;
-        this.rssUrl = config.rssUrl;
+    constructor({ source, type, rssUrl }) {
+        this.source = source;
+        this.type = type;
+        this.rssUrl = rssUrl;
     }
 
-    // Get latest sites from RSS url
     async getSites() {
         const latest = await models.Article.findOne({ source: this.source, type: this.type }).sort({ date: -1 }).select('date');
         const feed = await parser.parseURL(this.rssUrl);
